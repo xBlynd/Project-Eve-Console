@@ -26,19 +26,32 @@ async def query_eve(
     
     context = "\n".join(context_parts)
     
-    # Build the full prompt
-    full_prompt = f"{context}\nUSER QUESTION:\n{question}"
+    # Build the user message with context
+    user_message = f"""I have provided you with the following files from my project:
+
+{context}
+
+Based on these files, please answer the following question:
+
+{question}
+
+Provide a clear, direct answer based ONLY on the content of the files provided. If the files don't contain relevant information to answer the question, say so."""
     
-    # Call Ollama API
+    # Call Ollama API using the chat endpoint
     ollama_url = config.get("ollama_base_url", "http://localhost:11434")
     
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
-                f"{ollama_url}/api/generate",
+                f"{ollama_url}/api/chat",
                 json={
                     "model": model,
-                    "prompt": full_prompt,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": user_message
+                        }
+                    ],
                     "stream": False,
                 }
             )
@@ -46,7 +59,11 @@ async def query_eve(
             response.raise_for_status()
             result = response.json()
             
-            return result.get("response", "No response from EVE")
+            # Extract the assistant's message from the response
+            if "message" in result and "content" in result["message"]:
+                return result["message"]["content"]
+            else:
+                return result.get("response", "No response from EVE")
     
     except httpx.HTTPError as e:
         raise RuntimeError(f"Failed to connect to Ollama: {str(e)}")
