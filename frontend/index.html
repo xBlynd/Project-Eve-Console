@@ -41,7 +41,7 @@
                     </button>
                 </div>
                 <div id="chat-list" class="chat-list">
-                    <!-- Chat sessions will load here -->
+                    <p class="loading">Chat sessions will appear here</p>
                 </div>
             </div>
 
@@ -55,8 +55,18 @@
                     </button>
                 </div>
                 <div id="library-list" class="library-list">
-                    <!-- Libraries will load here -->
+                    <p class="loading">Loading...</p>
                 </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button id="settings-btn" class="btn-settings">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Settings
+                </button>
             </div>
         </aside>
 
@@ -74,12 +84,9 @@
                     <div class="control-item">
                         <label>Role</label>
                         <div class="role-pills">
-                            <button class="role-pill active" data-role="construction">
-                                🏗️ Construction
-                            </button>
-                            <button class="role-pill" data-role="dev">
-                                💻 Engineering
-                            </button>
+                            <button class="role-pill active" data-role="construction">Construction</button>
+                            <button class="role-pill" data-role="coding">Coding</button>
+                            <button class="role-pill" data-role="engineering">Engineering</button>
                         </div>
                     </div>
                 </div>
@@ -87,25 +94,7 @@
 
             <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
-                <div class="welcome-card">
-                    <div class="welcome-icon">🤖</div>
-                    <h2>Welcome to EVE</h2>
-                    <p class="welcome-subtitle">Your AI Operations Intelligence Layer</p>
-                    <div class="welcome-features">
-                        <div class="feature">
-                            <span class="feature-icon">💬</span>
-                            <span>Chat without a library - I can help with general questions</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">📁</span>
-                            <span>Add libraries to give me context from your projects</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🔄</span>
-                            <span>Switch roles for specialized expertise</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Messages will be inserted here -->
             </div>
 
             <!-- Input Area -->
@@ -161,6 +150,65 @@
                     <button type="submit" class="btn-primary">Create Library</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="btn-close" id="close-settings-modal">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3>Appearance</h3>
+                    <div class="form-field">
+                        <label>Theme</label>
+                        <select disabled>
+                            <option>xsvStudio Dark (Default)</option>
+                            <option>Light Mode (Coming Soon)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>AI Behavior</h3>
+                    <div class="form-field">
+                        <label>Response Style</label>
+                        <select disabled>
+                            <option>Balanced (Default)</option>
+                            <option>Concise</option>
+                            <option>Detailed</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Temperature</label>
+                        <input type="range" min="0" max="1" step="0.1" value="0.3" disabled>
+                        <small>Controls creativity vs. precision (currently: 0.3)</small>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>About</h3>
+                    <p class="settings-text">
+                        <strong>EVE Project Console</strong><br>
+                        Version 1.0.0<br>
+                        Created by xsvStudio<br>
+                        <br>
+                        Your AI Operations Intelligence Layer
+                    </p>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-primary" id="cancel-settings-btn">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
