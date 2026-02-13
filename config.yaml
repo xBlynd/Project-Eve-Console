@@ -1,0 +1,46 @@
+# EVE Project Console Configuration
+
+ollama_base_url: "http://localhost:11434"
+default_max_files: 10
+default_max_chars: 20000
+storage_path: "./storage/eve.db"
+
+# Models
+models:
+  construction: "eve-cd"
+  dev: "eve-dev"
+
+# File extensions to index
+file_extensions:
+  code:
+    - .py
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .html
+    - .css
+    - .cs
+    - .java
+    - .cpp
+    - .c
+    - .h
+  docs:
+    - .md
+    - .txt
+    - .rst
+    - .doc
+    - .docx
+  specs:
+    - .pdf
+  config:
+    - .json
+    - .yaml
+    - .yml
+    - .toml
+    - .ini
+    - .xml
+  data:
+    - .csv
+    - .xlsx
+    - .xls
