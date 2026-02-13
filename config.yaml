@@ -1,8 +1,9 @@
 # EVE Project Console Configuration
 
 ollama_base_url: "http://localhost:11434"
-default_max_files: 10
-default_max_chars: 20000
+default_max_files: 15
+default_max_chars: 30000  # Increased from 20000 to 30000 for better context
+
 storage_path: "./storage/eve.db"
 
 # Models
@@ -20,11 +21,18 @@ file_extensions:
     - .tsx
     - .html
     - .css
+    - .scss
     - .cs
     - .java
     - .cpp
     - .c
     - .h
+    - .go
+    - .rs
+    - .rb
+    - .php
+    - .swift
+    - .kt
   docs:
     - .md
     - .txt
@@ -40,7 +48,13 @@ file_extensions:
     - .toml
     - .ini
     - .xml
+    - .env
   data:
     - .csv
     - .xlsx
     - .xls
+  shell:
+    - .sh
+    - .bash
+    - .zsh
+    - .ps1
