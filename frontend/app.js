@@ -3,6 +3,7 @@
 const API_BASE = '/api';
 let currentLibraryId = null;
 let currentRole = 'construction';
+let conversationHistory = []; // Track conversation history
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,6 +25,8 @@ function setupEventListeners() {
             document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentRole = btn.dataset.role;
+            // Clear conversation history when switching roles
+            conversationHistory = [];
         });
     });
     
@@ -38,6 +41,8 @@ function setupEventListeners() {
     // Library selection
     document.getElementById('library-select').addEventListener('change', (e) => {
         currentLibraryId = e.target.value;
+        // Clear conversation history when switching libraries
+        conversationHistory = [];
     });
 }
 
@@ -168,6 +173,7 @@ async function deleteLibrary(libraryId) {
         if (currentLibraryId === libraryId) {
             currentLibraryId = null;
             document.getElementById('library-select').value = '';
+            conversationHistory = [];
         }
     } catch (error) {
         console.error('Failed to delete library:', error);
@@ -192,6 +198,12 @@ async function handleAskEve() {
     // Add user message to chat
     addMessageToChat('user', question);
     
+    // Add to conversation history
+    conversationHistory.push({
+        role: 'user',
+        content: question
+    });
+    
     // Clear input
     document.getElementById('question-input').value = '';
     
@@ -207,7 +219,8 @@ async function handleAskEve() {
                 role: currentRole,
                 question: question,
                 keywords: [],
-                max_files: 10
+                max_files: 10,
+                conversation_history: conversationHistory.slice(0, -1) // Send history without current question
             })
         });
         
@@ -223,6 +236,12 @@ async function handleAskEve() {
         
         // Add EVE's response
         addMessageToChat('assistant', result.answer, result.used_files);
+        
+        // Add to conversation history
+        conversationHistory.push({
+            role: 'assistant',
+            content: result.answer
+        });
         
     } catch (error) {
         console.error('Query failed:', error);

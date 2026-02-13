@@ -182,12 +182,13 @@ async def query_endpoint(query: QueryRequest, db: Session = Depends(get_db)):
                 used_files=[]
             )
         
-        # Query Ollama with context
+        # Query Ollama with context and conversation history
         answer = await query_eve(
             role=query.role,
             question=query.question,
             context_files=relevant_files,
-            config=config
+            config=config,
+            conversation_history=query.conversation_history
         )
         
         return QueryResponse(

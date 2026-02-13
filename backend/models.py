@@ -1,7 +1,7 @@
 """Pydantic Models for EVE Project Console"""
 
 from pydantic import BaseModel, Field
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Dict
 from datetime import datetime
 import uuid
 
@@ -34,6 +34,7 @@ class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1)
     keywords: List[str] = []
     max_files: int = Field(10, ge=1, le=50)
+    conversation_history: Optional[List[Dict[str, str]]] = None
 
 
 class QueryResponse(BaseModel):
