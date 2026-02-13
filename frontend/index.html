@@ -5,13 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVE Project Console - xsvStudio</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>EVE <span class="subtitle">by xsvStudio</span></h1>
-            <p class="tagline">Evolution - Your AI Operations Intelligence Layer</p>
+            <div class="header-content">
+                <div class="logo-section">
+                    <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- xsvStudio logo: Abstract X with Studio element -->
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff6b4a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff8566;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- X shape -->
+                        <path d="M 40 40 L 100 100 L 160 40 L 180 60 L 120 120 L 180 180 L 160 200 L 100 140 L 40 200 L 20 180 L 80 120 L 20 60 Z" 
+                              fill="url(#logoGradient)" opacity="0.9"/>
+                        <!-- Studio dot -->
+                        <circle cx="100" cy="100" r="15" fill="#ffffff"/>
+                    </svg>
+                    <div class="header-text">
+                        <h1>EVE <span class="subtitle">by xsvStudio</span></h1>
+                        <p class="tagline">Evolution - Your AI Operations Intelligence Layer</p>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div class="main-layout">
@@ -41,10 +63,10 @@
                         <label>Role:</label>
                         <div class="role-selector">
                             <button id="role-construction" class="role-btn active" data-role="construction">
-                                Construction Director
+                                🏗️ Construction Director
                             </button>
                             <button id="role-dev" class="role-btn" data-role="dev">
-                                CTO / Engineer
+                                💻 CTO / Engineer
                             </button>
                         </div>
                     </div>
@@ -90,7 +112,7 @@
                 </div>
                 <div class="form-group">
                     <label>Root Path:</label>
-                    <input type="text" id="library-path" required placeholder="C:\Projects\MyLibrary">
+                    <input type="text" id="library-path" required placeholder="C:\\Projects\\MyLibrary">
                     <small>Full path to the folder you want to index</small>
                 </div>
                 <div class="form-group">

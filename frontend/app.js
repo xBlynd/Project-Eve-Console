@@ -5,6 +5,17 @@ let currentLibraryId = null;
 let currentRole = 'construction';
 let conversationHistory = []; // Track conversation history
 
+// Configure marked.js for markdown rendering
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        highlight: function(code, lang) {
+            return code; // Could add syntax highlighting here later
+        }
+    });
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     loadLibraries();
@@ -73,8 +84,8 @@ function renderLibraryList(libraries) {
         <div class="library-item" data-id="${lib.id}">
             <h3>${lib.name}</h3>
             <div class="library-meta">
-                <div>Files: ${lib.file_count || 0}</div>
-                <div>Last indexed: ${lib.last_indexed ? new Date(lib.last_indexed).toLocaleDateString() : 'Never'}</div>
+                <div>📁 Files: ${lib.file_count || 0}</div>
+                <div>🕒 Indexed: ${lib.last_indexed ? new Date(lib.last_indexed).toLocaleDateString() : 'Never'}</div>
             </div>
             <div class="library-actions">
                 <button class="btn-primary btn-small" onclick="indexLibrary('${lib.id}')">Index</button>
@@ -218,8 +229,8 @@ async function handleAskEve() {
                 library_id: currentLibraryId,
                 role: currentRole,
                 question: question,
-                keywords: [],
-                max_files: 10,
+                keywords: extractKeywords(question),
+                max_files: 15, // Increased from 10 to catch more files
                 conversation_history: conversationHistory.slice(0, -1) // Send history without current question
             })
         });
@@ -234,7 +245,7 @@ async function handleAskEve() {
         // Remove loading message
         removeMessageFromChat(loadingId);
         
-        // Add EVE's response
+        // Add EVE's response with markdown rendering
         addMessageToChat('assistant', result.answer, result.used_files);
         
         // Add to conversation history
@@ -248,6 +259,13 @@ async function handleAskEve() {
         removeMessageFromChat(loadingId);
         addMessageToChat('assistant', `Error: ${error.message}`);
     }
+}
+
+// Extract keywords from question for better file retrieval
+function extractKeywords(question) {
+    const stopWords = ['what', 'how', 'where', 'when', 'why', 'is', 'are', 'the', 'a', 'an', 'do', 'does', 'did', 'can', 'could', 'should', 'would'];
+    const words = question.toLowerCase().match(/\b\w+\b/g) || [];
+    return words.filter(w => w.length > 3 && !stopWords.includes(w));
 }
 
 // Add message to chat
@@ -265,15 +283,24 @@ function addMessageToChat(role, content, usedFiles = []) {
     messageEl.className = `message message-${role}`;
     messageEl.id = messageId;
     
+    // Render markdown for assistant messages
+    let renderedContent = content;
+    if (role === 'assistant' && typeof marked !== 'undefined') {
+        renderedContent = marked.parse(content);
+    } else {
+        // For user messages, just escape HTML
+        renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    
     let html = `
-        <div class="message-label">${role === 'user' ? 'You' : 'EVE'}</div>
-        <div class="message-content">${content}</div>
+        <div class="message-label">${role === 'user' ? '👤 You' : '🤖 EVE'}</div>
+        <div class="message-content">${renderedContent}</div>
     `;
     
     if (usedFiles && usedFiles.length > 0) {
         html += `
             <div class="used-files">
-                <div class="used-files-label">Referenced files:</div>
+                <div class="used-files-label">📂 Referenced files:</div>
                 ${usedFiles.map(f => `<span class="file-tag">${f.rel_path}</span>`).join('')}
             </div>
         `;
