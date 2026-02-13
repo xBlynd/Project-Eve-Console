@@ -93,16 +93,20 @@
             </header>
 
             <!-- Chat Messages -->
-            <div class="chat-messages" id="chat-messages">
-                <!-- Messages will be inserted here -->
-            </div>
+            <div class="chat-messages" id="chat-messages"></div>
 
             <!-- Input Area -->
             <div class="chat-input-container">
                 <div class="input-wrapper">
+                    <input type="file" id="file-input" style="display: none" accept=".pdf,.txt,.md,.doc,.docx" multiple>
+                    <button id="attach-btn" class="btn-attach" title="Attach files">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                    </button>
                     <textarea 
                         id="message-input" 
-                        placeholder="Ask EVE anything..."
+                        placeholder="Ask EVE anything... (or attach files)"
                         rows="1"
                     ></textarea>
                     <button id="send-btn" class="btn-send">
@@ -111,7 +115,8 @@
                         </svg>
                     </button>
                 </div>
-                <p class="input-hint">Ctrl+Enter to send</p>
+                <div id="attached-files" class="attached-files"></div>
+                <p class="input-hint">Ctrl+Enter to send • Attach files for context</p>
             </div>
         </main>
     </div>
