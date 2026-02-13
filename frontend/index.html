@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVE Project Console - xsvStudio</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>EVE <span class="subtitle">by xsvStudio</span></h1>
+            <p class="tagline">Evolution - Your AI Operations Intelligence Layer</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Sidebar - Library Manager -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Libraries</h2>
+                    <button id="add-library-btn" class="btn-primary">Add Library</button>
+                </div>
+                
+                <div id="library-list" class="library-list">
+                    <!-- Libraries will be loaded here -->
+                </div>
+            </aside>
+
+            <!-- Main Panel - Chat Interface -->
+            <main class="main-panel">
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Select Library:</label>
+                        <select id="library-select" class="select-input">
+                            <option value="">-- Select a Library --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Role:</label>
+                        <div class="role-selector">
+                            <button id="role-construction" class="role-btn active" data-role="construction">
+                                Construction Director
+                            </button>
+                            <button id="role-dev" class="role-btn" data-role="dev">
+                                CTO / Engineer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div id="chat-history" class="chat-history">
+                        <div class="welcome-message">
+                            <h3>Welcome to EVE Project Console</h3>
+                            <p>Select a library, choose your role, and ask EVE anything.</p>
+                            <ul>
+                                <li>Add a library using the button in the sidebar</li>
+                                <li>Index the library to scan its files</li>
+                                <li>Ask questions and EVE will use relevant files as context</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <textarea 
+                        id="question-input" 
+                        placeholder="Ask EVE..."
+                        rows="3"
+                    ></textarea>
+                    <button id="ask-btn" class="btn-submit">Ask EVE</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Library Modal -->
+    <div id="add-library-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Library</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <form id="add-library-form">
+                <div class="form-group">
+                    <label>Library Name:</label>
+                    <input type="text" id="library-name" required placeholder="e.g., Allstar Bid Standards">
+                </div>
+                <div class="form-group">
+                    <label>Root Path:</label>
+                    <input type="text" id="library-path" required placeholder="C:\Projects\MyLibrary">
+                    <small>Full path to the folder you want to index</small>
+                </div>
+                <div class="form-group">
+                    <label>Type:</label>
+                    <select id="library-type">
+                        <option value="project">Project</option>
+                        <option value="library">Library</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Library</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
