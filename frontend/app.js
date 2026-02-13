@@ -6,7 +6,7 @@ let currentRole = 'construction';
 let currentChatId = null;
 let conversationHistory = [];
 
-// Configure marked.js for markdown rendering
+// Configure marked.js
 if (typeof marked !== 'undefined') {
     marked.setOptions({
         breaks: true,
@@ -17,7 +17,7 @@ if (typeof marked !== 'undefined') {
     });
 }
 
-// Initialize app
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     console.log('EVE Console initializing...');
     loadLibraries();
@@ -25,15 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
     startNewChat();
 });
 
-// Setup event listeners
 function setupEventListeners() {
-    // Library modal
+    // Modals
     document.getElementById('add-library-btn').addEventListener('click', openAddLibraryModal);
     document.getElementById('close-modal').addEventListener('click', closeAddLibraryModal);
     document.getElementById('cancel-btn').addEventListener('click', closeAddLibraryModal);
     document.getElementById('add-library-form').addEventListener('submit', handleAddLibrary);
     
-    // Settings modal
     document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
     document.getElementById('close-settings-modal').addEventListener('click', closeSettingsModal);
     document.getElementById('cancel-settings-btn').addEventListener('click', closeSettingsModal);
@@ -47,7 +45,6 @@ function setupEventListeners() {
             document.querySelectorAll('.role-pill').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentRole = btn.dataset.role;
-            conversationHistory = [];
         });
     });
     
@@ -55,10 +52,7 @@ function setupEventListeners() {
     const sendBtn = document.getElementById('send-btn');
     const messageInput = document.getElementById('message-input');
     
-    sendBtn.addEventListener('click', () => {
-        console.log('Send button clicked');
-        handleSendMessage();
-    });
+    sendBtn.addEventListener('click', handleSendMessage);
     
     messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -76,11 +70,9 @@ function setupEventListeners() {
     // Library selection
     document.getElementById('library-select').addEventListener('change', (e) => {
         currentLibraryId = e.target.value || null;
-        conversationHistory = [];
     });
 }
 
-// Start new chat
 function startNewChat() {
     currentChatId = `chat-${Date.now()}`;
     conversationHistory = [];
@@ -109,7 +101,6 @@ function startNewChat() {
     `;
 }
 
-// Load libraries
 async function loadLibraries() {
     try {
         const response = await fetch(`${API_BASE}/libraries`);
@@ -122,7 +113,6 @@ async function loadLibraries() {
     }
 }
 
-// Render library list
 function renderLibraryList(libraries) {
     const listEl = document.getElementById('library-list');
     
@@ -146,14 +136,12 @@ function renderLibraryList(libraries) {
     `).join('');
 }
 
-// Populate library select
 function populateLibrarySelect(libraries) {
     const selectEl = document.getElementById('library-select');
     selectEl.innerHTML = '<option value="">General (No Library)</option>' +
         libraries.map(lib => `<option value="${lib.id}">${lib.name}</option>`).join('');
 }
 
-// Modal functions
 function openAddLibraryModal() {
     document.getElementById('add-library-modal').classList.add('active');
 }
@@ -171,7 +159,6 @@ function closeSettingsModal() {
     document.getElementById('settings-modal').classList.remove('active');
 }
 
-// Handle add library
 async function handleAddLibrary(e) {
     e.preventDefault();
     
@@ -200,7 +187,6 @@ async function handleAddLibrary(e) {
     }
 }
 
-// Index library
 async function indexLibrary(libraryId) {
     try {
         const response = await fetch(`${API_BASE}/libraries/${libraryId}/index`, {
@@ -220,7 +206,6 @@ async function indexLibrary(libraryId) {
     }
 }
 
-// Delete library
 async function deleteLibrary(libraryId) {
     if (!confirm('Delete this library?')) return;
     
@@ -238,7 +223,6 @@ async function deleteLibrary(libraryId) {
         if (currentLibraryId === libraryId) {
             currentLibraryId = null;
             document.getElementById('library-select').value = '';
-            conversationHistory = [];
         }
     } catch (error) {
         console.error('Failed to delete library:', error);
@@ -246,25 +230,24 @@ async function deleteLibrary(libraryId) {
     }
 }
 
-// Handle send message
+// CRITICAL FIX: Proper message handling
 async function handleSendMessage() {
     const input = document.getElementById('message-input');
-    const message = input.value.trim();
+    const userMessage = input.value.trim();
     
-    console.log('handleSendMessage called, message:', message);
+    if (!userMessage) return;
     
-    if (!message) {
-        console.log('Empty message, returning');
-        return;
-    }
+    console.log('Sending message:', userMessage);
     
-    // Add user message
-    addMessage('user', message);
-    conversationHistory.push({ role: 'user', content: message });
-    
-    // Clear input
+    // Clear input FIRST
     input.value = '';
     input.style.height = 'auto';
+    
+    // Add user message to UI
+    addMessage('user', userMessage);
+    
+    // Add to conversation history
+    conversationHistory.push({ role: 'user', content: userMessage });
     
     // Show loading
     const loadingId = addMessage('assistant', 'EVE is thinking...');
@@ -276,10 +259,10 @@ async function handleSendMessage() {
             body: JSON.stringify({
                 library_id: currentLibraryId,
                 role: currentRole,
-                question: message,
-                keywords: extractKeywords(message),
+                question: userMessage,
+                keywords: extractKeywords(userMessage),
                 max_files: 15,
-                conversation_history: conversationHistory.slice(0, -1)
+                conversation_history: conversationHistory.slice(0, -1) // Don't send current question
             })
         });
         
@@ -290,36 +273,36 @@ async function handleSendMessage() {
         
         const result = await response.json();
         
-        // Remove loading
+        // Remove loading message
         removeMessage(loadingId);
         
         // Add EVE's response
         addMessage('assistant', result.answer, result.used_files);
+        
+        // Add to conversation history
         conversationHistory.push({ role: 'assistant', content: result.answer });
         
     } catch (error) {
         console.error('Query failed:', error);
         removeMessage(loadingId);
-        addMessage('assistant', `Error: ${error.message}`);
+        addMessage('assistant', `❌ Error: ${error.message}`);
     }
 }
 
-// Extract keywords
 function extractKeywords(question) {
-    const stopWords = ['what', 'how', 'where', 'when', 'why', 'is', 'are', 'the', 'a', 'an', 'do', 'does'];
+    const stopWords = ['what', 'how', 'where', 'when', 'why', 'is', 'are', 'the', 'a', 'an', 'do', 'does', 'can', 'you', 'me', 'find', 'anything'];
     const words = question.toLowerCase().match(/\b\w+\b/g) || [];
-    return words.filter(w => w.length > 3 && !stopWords.includes(w));
+    return words.filter(w => w.length > 2 && !stopWords.includes(w));
 }
 
-// Add message to chat
 function addMessage(role, content, usedFiles = []) {
     const container = document.getElementById('chat-messages');
     
-    // Remove welcome card
+    // Remove welcome card on first message
     const welcome = container.querySelector('.welcome-card');
     if (welcome) welcome.remove();
     
-    const messageId = `msg-${Date.now()}`;
+    const messageId = `msg-${Date.now()}-${Math.random()}`;
     const messageEl = document.createElement('div');
     messageEl.className = `message message-${role}`;
     messageEl.id = messageId;
@@ -329,7 +312,7 @@ function addMessage(role, content, usedFiles = []) {
     if (role === 'assistant' && typeof marked !== 'undefined') {
         renderedContent = marked.parse(content);
     } else {
-        renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
     }
     
     let html = `
@@ -348,12 +331,13 @@ function addMessage(role, content, usedFiles = []) {
     
     messageEl.innerHTML = html;
     container.appendChild(messageEl);
+    
+    // Scroll to bottom
     container.scrollTop = container.scrollHeight;
     
     return messageId;
 }
 
-// Remove message
 function removeMessage(messageId) {
     const el = document.getElementById(messageId);
     if (el) el.remove();
