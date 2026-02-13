@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import yaml
 import os
+import traceback
 
 from backend.models import (
     LibraryCreate,
@@ -161,28 +162,62 @@ def get_library_files(library_id: str, skip: int = 0, limit: int = 100, db: Sess
 @app.post("/api/query", response_model=QueryResponse)
 async def query_endpoint(query: QueryRequest, db: Session = Depends(get_db)):
     """Ask EVE a question with context from library files"""
-    # Validate library exists
-    library = db.query(Library).filter(Library.id == query.library_id).first()
-    if not library:
-        raise HTTPException(status_code=404, detail="Library not found")
     
-    # Find relevant files
+    print(f"\n{'='*60}")
+    print(f"QUERY ENDPOINT CALLED")
+    print(f"Library ID: {query.library_id}")
+    print(f"Role: {query.role}")
+    print(f"Question: {query.question}")
+    print(f"Keywords: {query.keywords}")
+    print(f"{'='*60}\n")
+    
     try:
-        relevant_files = find_relevant_files(
-            db,
-            query.library_id,
-            query.keywords,
-            query.max_files,
-            config
-        )
+        # If library_id is provided, fetch files from library
+        relevant_files = []
         
-        if not relevant_files:
-            return QueryResponse(
-                answer="No relevant files found in this library. Please ensure the library has been indexed.",
-                used_files=[]
+        if query.library_id:
+            # Validate library exists
+            library = db.query(Library).filter(Library.id == query.library_id).first()
+            if not library:
+                print(f"ERROR: Library {query.library_id} not found")
+                raise HTTPException(status_code=404, detail="Library not found")
+            
+            print(f"Library found: {library.name}")
+            print(f"Library file count: {library.file_count}")
+            
+            # Check if library has files
+            file_count = db.query(FileEntry).filter(FileEntry.library_id == query.library_id).count()
+            print(f"Actual files in DB: {file_count}")
+            
+            if file_count == 0:
+                return QueryResponse(
+                    answer="This library has no indexed files. Please click 'Index' to scan the library first.",
+                    used_files=[]
+                )
+            
+            # Find relevant files
+            print(f"Calling find_relevant_files...")
+            relevant_files = find_relevant_files(
+                db,
+                query.library_id,
+                query.keywords,
+                query.max_files,
+                config
             )
+            
+            print(f"\nRetrieved {len(relevant_files)} files")
+            
+            if not relevant_files:
+                return QueryResponse(
+                    answer="I couldn't find any relevant files for your question. Try rephrasing or asking about different aspects of your project.",
+                    used_files=[]
+                )
+        else:
+            # General chat without library
+            print("No library selected - general chat mode")
         
         # Query Ollama with context and conversation history
+        print(f"\nCalling query_eve...")
         answer = await query_eve(
             role=query.role,
             question=query.question,
@@ -191,12 +226,23 @@ async def query_endpoint(query: QueryRequest, db: Session = Depends(get_db)):
             conversation_history=query.conversation_history
         )
         
+        print(f"\nGot answer from EVE ({len(answer)} chars)")
+        print(f"{'='*60}\n")
+        
         return QueryResponse(
             answer=answer,
             used_files=[{"rel_path": f["rel_path"]} for f in relevant_files]
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"\n{'='*60}")
+        print(f"ERROR in query_endpoint:")
+        print(f"{str(e)}")
+        print(f"\nTraceback:")
+        traceback.print_exc()
+        print(f"{'='*60}\n")
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
 
