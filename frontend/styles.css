@@ -252,7 +252,9 @@ header h1 .subtitle {
 
 .message-content {
     color: var(--xsv-white);
-    line-height: 1.6;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .used-files {
