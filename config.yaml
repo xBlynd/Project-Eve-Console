@@ -2,14 +2,15 @@
 
 ollama_base_url: "http://localhost:11434"
 default_max_files: 15
-default_max_chars: 30000  # Increased from 20000 to 30000 for better context
+default_max_chars: 30000
 
 storage_path: "./storage/eve.db"
 
-# Models
+# Models - now with 3 roles
 models:
   construction: "eve-cd"
-  dev: "eve-dev"
+  coding: "eve-dev"  # Coding uses dev model
+  engineering: "eve-cd"  # Engineering uses construction model (can create separate later)
 
 # File extensions to index
 file_extensions:

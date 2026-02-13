@@ -27,10 +27,10 @@ class LibraryResponse(BaseModel):
         from_attributes = True
 
 
-# Query Models
+# Query Models - updated for 3 roles
 class QueryRequest(BaseModel):
-    library_id: str
-    role: Literal["construction", "dev"]
+    library_id: Optional[str] = None  # Made optional for general chat
+    role: Literal["construction", "coding", "engineering"]
     question: str = Field(..., min_length=1)
     keywords: List[str] = []
     max_files: int = Field(10, ge=1, le=50)
