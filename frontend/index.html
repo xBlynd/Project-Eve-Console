@@ -3,126 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVE Project Console - xsvStudio</title>
+    <title>EVE - xsvStudio AI Operations Layer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
-    <!-- Marked.js for markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <div class="header-content">
-                <div class="logo-section">
-                    <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <!-- xsvStudio logo: Abstract X with Studio element -->
-                        <defs>
-                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ff6b4a;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ff8566;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <!-- X shape -->
-                        <path d="M 40 40 L 100 100 L 160 40 L 180 60 L 120 120 L 180 180 L 160 200 L 100 140 L 40 200 L 20 180 L 80 120 L 20 60 Z" 
-                              fill="url(#logoGradient)" opacity="0.9"/>
-                        <!-- Studio dot -->
-                        <circle cx="100" cy="100" r="15" fill="#ffffff"/>
-                    </svg>
-                    <div class="header-text">
-                        <h1>EVE <span class="subtitle">by xsvStudio</span></h1>
-                        <p class="tagline">Evolution - Your AI Operations Intelligence Layer</p>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <svg class="logo-full" width="180" height="45" viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .logo-text { 
+                            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+                            font-weight: 700; 
+                            font-size: 100px; 
+                            letter-spacing: -2px;
+                        }
+                    </style>
+                    <text x="50" y="110" class="logo-text">
+                        <tspan fill="#8b9dc3">xsv</tspan><tspan fill="#5c5edc">Studio</tspan><tspan fill="#ff6b6b">.</tspan>
+                    </text>
+                </svg>
+                <p class="sidebar-subtitle">EVE Project Console</p>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3>Chat Sessions</h3>
+                    <button id="new-chat-btn" class="btn-icon" title="New Chat">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="chat-list" class="chat-list">
+                    <!-- Chat sessions will load here -->
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h3>Libraries</h3>
+                    <button id="add-library-btn" class="btn-icon" title="Add Library">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="library-list" class="library-list">
+                    <!-- Libraries will load here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-controls">
+                    <div class="control-item">
+                        <label>Library</label>
+                        <select id="library-select" class="select-minimal">
+                            <option value="">General (No Library)</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>Role</label>
+                        <div class="role-pills">
+                            <button class="role-pill active" data-role="construction">
+                                🏗️ Construction
+                            </button>
+                            <button class="role-pill" data-role="dev">
+                                💻 Engineering
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-card">
+                    <div class="welcome-icon">🤖</div>
+                    <h2>Welcome to EVE</h2>
+                    <p class="welcome-subtitle">Your AI Operations Intelligence Layer</p>
+                    <div class="welcome-features">
+                        <div class="feature">
+                            <span class="feature-icon">💬</span>
+                            <span>Chat without a library - I can help with general questions</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">📁</span>
+                            <span>Add libraries to give me context from your projects</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🔄</span>
+                            <span>Switch roles for specialized expertise</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
 
-        <div class="main-layout">
-            <!-- Sidebar - Library Manager -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h2>Libraries</h2>
-                    <button id="add-library-btn" class="btn-primary">Add Library</button>
-                </div>
-                
-                <div id="library-list" class="library-list">
-                    <!-- Libraries will be loaded here -->
-                </div>
-            </aside>
-
-            <!-- Main Panel - Chat Interface -->
-            <main class="main-panel">
-                <div class="controls">
-                    <div class="control-group">
-                        <label>Select Library:</label>
-                        <select id="library-select" class="select-input">
-                            <option value="">-- Select a Library --</option>
-                        </select>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Role:</label>
-                        <div class="role-selector">
-                            <button id="role-construction" class="role-btn active" data-role="construction">
-                                🏗️ Construction Director
-                            </button>
-                            <button id="role-dev" class="role-btn" data-role="dev">
-                                💻 CTO / Engineer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chat-container">
-                    <div id="chat-history" class="chat-history">
-                        <div class="welcome-message">
-                            <h3>Welcome to EVE Project Console</h3>
-                            <p>Select a library, choose your role, and ask EVE anything.</p>
-                            <ul>
-                                <li>Add a library using the button in the sidebar</li>
-                                <li>Index the library to scan its files</li>
-                                <li>Ask questions and EVE will use relevant files as context</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-container">
+            <!-- Input Area -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
                     <textarea 
-                        id="question-input" 
-                        placeholder="Ask EVE..."
-                        rows="3"
+                        id="message-input" 
+                        placeholder="Ask EVE anything..."
+                        rows="1"
                     ></textarea>
-                    <button id="ask-btn" class="btn-submit">Ask EVE</button>
+                    <button id="send-btn" class="btn-send">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
                 </div>
-            </main>
-        </div>
+                <p class="input-hint">Ctrl+Enter to send</p>
+            </div>
+        </main>
     </div>
 
     <!-- Add Library Modal -->
     <div id="add-library-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
             <div class="modal-header">
                 <h2>Add New Library</h2>
-                <button class="close-btn" id="close-modal">&times;</button>
+                <button class="btn-close" id="close-modal">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
             <form id="add-library-form">
-                <div class="form-group">
-                    <label>Library Name:</label>
-                    <input type="text" id="library-name" required placeholder="e.g., Allstar Bid Standards">
+                <div class="form-field">
+                    <label>Library Name</label>
+                    <input type="text" id="library-name" required placeholder="e.g., Ghost Shell Project">
                 </div>
-                <div class="form-group">
-                    <label>Root Path:</label>
-                    <input type="text" id="library-path" required placeholder="C:\\Projects\\MyLibrary">
-                    <small>Full path to the folder you want to index</small>
+                <div class="form-field">
+                    <label>Root Path</label>
+                    <input type="text" id="library-path" required placeholder="C:\\Projects\\MyProject">
+                    <small>Full path to the folder containing your files</small>
                 </div>
-                <div class="form-group">
-                    <label>Type:</label>
+                <div class="form-field">
+                    <label>Type</label>
                     <select id="library-type">
                         <option value="project">Project</option>
                         <option value="library">Library</option>
                     </select>
                 </div>
-                <div class="form-actions">
+                <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
                     <button type="submit" class="btn-primary">Create Library</button>
                 </div>
